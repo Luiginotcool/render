@@ -9,6 +9,9 @@ class Input {
         Input.mouseDx = 0;
         Input.mouseDy = 0;
     }
+    static setOnMouseDown(f) {
+        document.addEventListener("mousedown", function (e) { f(); });
+    }
     static changeKey(key, to) {
         //console.log(key, "to", to);
         switch (key.toLowerCase()) {

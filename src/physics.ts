@@ -14,6 +14,13 @@ class PhysicsBody {
         // 10 u/s means after dt s, body will move 10*dt u
         this.vel = this.vel.add(this.acc.mult(dt));
         this.pos = this.pos.add(this.vel.mult(dt));
+        //console.log(this.acc)
+        this.acc = new Vec3();
+
         return this.pos;
     }
+}
+
+class Boid extends PhysicsBody {
+
 }

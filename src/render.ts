@@ -181,13 +181,14 @@ class Render {
         
 
         // Translate so cam is origin
-        let transV = new Vec3(rotV.x + cam.x, rotV.y + cam.y, rotV.z + cam.z)
+        let transV = rotV.add(cam.pos);
         return transV;
     }
 
     static renderTriArray(triArr: Array<Tri>, cam: Camera) {
         // Sort triArr by depth
         triArr = this.sortTrisByDepth(triArr, cam);
+        let i = 0;
         //console.log("Sorted Tris", triArr)
 
         triArr.forEach(tri => {
@@ -212,7 +213,8 @@ class Render {
                     let sp = {x: vp.x*Graphics.width, y: vp.y*Graphics.height};
                     vArr.push(new Vec2(sp.x, sp.y));
                 })
-                screenTris.push(new Tri2d(vArr, tri.id, tri.colour))
+                screenTris.push(new Tri2d(vArr, tri.id, tri.colour));
+                i ++;
             })
 
             let clippedScreenTris: Array<Tri2d> = screenTris;
@@ -223,6 +225,7 @@ class Render {
             })
 
         })
+        console.log("Tris drawn: ", i);
 
         // For each tri:
         //      Translate and rotate
@@ -251,7 +254,6 @@ class Render {
     }
 
     static drawGrid(pos: Vec3, width: number, height: number, cellSize: number, cam: Camera) {
-        let gridSize = 10;
         width /= 2;
         height /= 2;
         for (let x = -width; x <= width; x++) {

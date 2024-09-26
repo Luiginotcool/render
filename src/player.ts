@@ -35,6 +35,7 @@ class PlayerController {
 
         if (Input.keys.space) {
             this.pos.y += this.speed
+            //console.log(this.pos)
         }
 
         if (Input.keys.shift) {
@@ -51,7 +52,6 @@ class PlayerController {
                 Input.mouseX = 0;
             }
         }
-
         return new Transform(this.pos, undefined, new Vec3(this.elevation, this.heading, 0) );
     }
 }

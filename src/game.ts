@@ -1,58 +1,82 @@
 class Game {
 
-    static player: PlayerController;
+    static player: GameObject;
     static triArr: Array<Tri>
     static t: number;
-    static gameObjects: Array<GameObject>;
     static sceneArray: Array<Scene>;
+    static camArray: Array<Camera>;
+    static sceneNum: number;
 
     static init(): void {
         this.t = 0;
-        this.gameObjects = [];
+        this.sceneNum = 0;
+        //this.gameObjects = [];
+        this.sceneArray = [];
+        this.camArray = [];
         Render.init();
 
-        Render.camArray.push(new Camera());
-        this.triArr = Game.loadTris();
-        this.player = new PlayerController();
+        Input.setOnMouseDown(Game.onMouseClick);
 
 
-        /*
+        
         let playerController = new PlayerController();
-        let cam = new Camera();
         this.player = new GameObject()
         this.player.controller = playerController;
-        let newScene = new Scene();
-        sceneArray.push(newScene);
+        this.camArray.push(new Camera);
 
+        let gameObjects: Array<GameObject> = [];
+        Game.loadTris().forEach(tri => {
+            let obj = new GameObject();
+            obj.mesh = new Mesh([tri]);
+            obj.physicsBody = new PhysicsBody(new Vec3(0, 0, 1), Vec3.randomVec().mult(0.001));
+            gameObjects.push(obj);
+        })
 
-        */
+        //this.triArr = Game.loadTris();
+        this.sceneArray.push(new Scene(gameObjects));
+
+        gameObjects = [];
+        Game.loadTris().forEach(tri => {
+            let obj = new GameObject();
+            obj.mesh = new Mesh([tri]);
+            obj.physicsBody = new PhysicsBody();
+            gameObjects.push(obj);
+        })
+        this.sceneArray.push(new Scene(gameObjects));
+
+        gameObjects = [];
+        let obj = new GameObject();
+        obj.mesh = Mesh.cubeMesh(new Transform());
+        this.sceneArray.push(new Scene([obj]));
+
+        //this.triArr = Game.loadTris();
 
     }
 
     static gameLoop(dt: number): void {
-        // Update player and cam position
-        this.player.handleInput();
-        Render.camArray[0].setState(this.player.pos, this.player.heading, this.player.elevation);
 
 
 
-        this.triArr.forEach((tri, i) => {
-            let c = tri.getCentroid();
-            Game.triArr[i] = tri.rotate((Math.random())*Math.random()/100, (Math.random())*Math.random()/100, c.x, c.y, c.z);
-            let randomDir = Vec2.fromHeading(Math.random()*Math.PI*2, Math.random()/100);
-            Game.triArr[i] = tri.translate(randomDir.x, -0.0, randomDir.y);
+
+         
+        //this.player.controller!.handleInput();
+        this.player.update(dt); //-> handleInput, do phyisics
+        this.camArray[0].setState(this.player.transform);
+
+        let objs = Game.sceneArray[0].gameObjects;
+        objs.forEach((obj, i) => {
+            if (obj.has(obj.physicsBody)) {
+                //console.log(obj.physicsBody!.pos)
+                //obj.physicsBody!.acc = new Vec3((Math.random()-0.5)*0.00001,(Math.random()-0.5)*0.00001,(Math.random()-0.5)*0.00001); 
+                obj.physicsBody!.acc = Game.getForce(obj.physicsBody!.pos.add(obj.mesh!.triArray[0].getCentroid()));
+                obj.update(dt);
+                //obj.transform.scale = new Vec3(Game.t /1);
+                //obj.transform!.pos = new Vec3(0, 0, 0);
+                Game.sceneArray[0].gameObjects[i] = obj;
+            }
+
         })
 
-
-
-
-        /* 
-        this.player.controller.handleInput();
-        this.camArray[0].setState(this.player.pos, this.player.heading, this.player.elevation)
-
-        this.player.update(); -> handleInput, do phyisics
-        this.camArray[0].setState(this.player.transform.pos, this.player.transform.rotate[1], this.player.transform.rotate[0])
-        */
 
         
         Game.draw();
@@ -61,31 +85,42 @@ class Game {
         Game.t ++;
     }
 
-    static draw(): void {
-        Graphics.background();
-
-        let cam = Render.camArray[0];
-        Render.drawGrid(new Vec3(0, -2, 0), 10, 10, 1, cam);
-        Render.renderTriArray(Game.triArr, cam);
-
-        /*
+    static draw(): void {       
         Graphics.background();
         let cam = Game.camArray[0];
-        let scene = Game.sceneArray[0];
+        let scene = Game.sceneArray[Game.sceneNum%Game.sceneArray.length];
+
 
         Render.drawGrid(new Vec3(0, -2, 0), 10, 10, 1, cam);
-        Game.renderScene(scene, cam);
 
-        
-
-
-        */
-
+        if (Game.sceneArray.length > 0) {
+            //console.log(Game.sceneArray[0].gameObjects[0].physicsBody!.pos);
+            //console.log(Game.sceneArray[0].gameObjects[0].transform!.pos);
+            Game.renderScene(scene, cam);
+        }
 
 
         ///Graphics.drawText(`${this.player.heading}`, 50, 10);
         //console.log(this.player.heading);
         
+    }
+
+    static getForce(pos: Vec3) {
+        let size = 0.0000001 * Math.random();
+        return pos.mult(-1 * size);
+    }
+
+    static renderScene(scene: Scene, cam: Camera) {
+        let triArr: Array<Tri> = [];
+ 
+        scene.gameObjects.forEach(obj => {
+            if (obj.has(obj.mesh)) {
+                triArr.push(...obj.mesh!.triArray.map(tri => {return tri.transform(obj.transform)}));
+            }
+        })
+        //console.log(scene);
+        //console.log(triArr.length, Game.triArr.length);
+        Render.renderTriArray(triArr, cam);
     }
 
     static parseObjData(objData: string): Array<Tri> {
@@ -178,6 +213,10 @@ class Game {
 
     static randomColour(): string {
         return `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`;
+    }   
+
+    static onMouseClick(): void {
+        Game.sceneNum = (Game.sceneNum + 1) % 2; 
     }
 }
 

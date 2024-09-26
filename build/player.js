@@ -29,6 +29,7 @@ class PlayerController {
         }
         if (Input.keys.space) {
             this.pos.y += this.speed;
+            //console.log(this.pos)
         }
         if (Input.keys.shift) {
             this.pos.y -= this.speed;

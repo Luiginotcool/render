@@ -136,12 +136,13 @@ class Render {
         let rotMat2 = new Mat3x3(1, 0, 0, 0, ct, -st, 0, st, ct);
         let rotV = rotMat.mult(rotMat2.mult(new Vec3(vertex.x, vertex.y, vertex.z)));
         // Translate so cam is origin
-        let transV = new Vec3(rotV.x + cam.x, rotV.y + cam.y, rotV.z + cam.z);
+        let transV = rotV.add(cam.pos);
         return transV;
     }
     static renderTriArray(triArr, cam) {
         // Sort triArr by depth
         triArr = this.sortTrisByDepth(triArr, cam);
+        let i = 0;
         //console.log("Sorted Tris", triArr)
         triArr.forEach(tri => {
             let rotArr = [];
@@ -163,6 +164,7 @@ class Render {
                     vArr.push(new Vec2(sp.x, sp.y));
                 });
                 screenTris.push(new Tri2d(vArr, tri.id, tri.colour));
+                i++;
             });
             let clippedScreenTris = screenTris;
             clippedScreenTris.forEach(tri => {
@@ -170,6 +172,7 @@ class Render {
                 Graphics.fillPoly(tri.vertexArray, undefined, tri.colour);
             });
         });
+        console.log("Tris drawn: ", i);
         // For each tri:
         //      Translate and rotate
         //      Clip to screen:
@@ -192,7 +195,6 @@ class Render {
         return sortedTriArr;
     }
     static drawGrid(pos, width, height, cellSize, cam) {
-        let gridSize = 10;
         width /= 2;
         height /= 2;
         for (let x = -width; x <= width; x++) {

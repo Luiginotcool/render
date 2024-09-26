@@ -25,6 +25,10 @@ class Input {
         Input.mouseDy = 0;
     }
 
+    static setOnMouseDown(f: Function) {
+        document.addEventListener("mousedown", function(e) {f()});
+    }
+
     static changeKey(key:string, to:number): void {
         //console.log(key, "to", to);
         switch (key.toLowerCase()) {

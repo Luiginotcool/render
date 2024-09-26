@@ -1,5 +1,40 @@
 "use strict";
-let obj = `v -3.000000 1.800000 0.000000
+class Obj {
+    static parseObjData(objData) {
+        let vArr = [];
+        let fArr = [];
+        let triArr = [];
+        let lines = objData.split("\n");
+        lines.forEach(line => {
+            line = line.trim();
+            if (line.startsWith("#") || line == "") {
+                return;
+            }
+            if (line.startsWith("v")) {
+                let vert = line.split(" ");
+                //console.log(new Vec3(+vert[1], +vert[2], +vert[3]));
+                vArr.push(new Vec3(+vert[1], +vert[2], +vert[3]));
+                return;
+            }
+            if (line.startsWith("f")) {
+                let face = line.split(" ");
+                let faceArr = [];
+                face.forEach(v => {
+                    let vSplit = v.split("/");
+                    faceArr.push(+[vSplit[1]]);
+                });
+                fArr.push(faceArr);
+            }
+        });
+        fArr.forEach((face, i) => {
+            console.log([vArr[face[0]], vArr[face[1]], vArr[face[2]]]);
+            triArr.push(new Tri([vArr[face[0]], vArr[face[1]], vArr[face[2]]], i));
+        });
+        return new Mesh(triArr);
+    }
+}
+Obj.objData = [
+    `v -3.000000 1.800000 0.000000
 v -2.991600 1.800000 -0.081000
 v -2.991600 1.800000 0.081000
 v -2.989450 1.666162 0.000000
@@ -9963,4 +9998,7 @@ f 2880 2886 2970
 f 3004 3001 2968
 f 2968 2970 3004
 f 3022 3021 3001
-f 3001 3004 3022`;
+f 3001 3004 3022
+
+        `
+];

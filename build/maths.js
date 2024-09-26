@@ -109,6 +109,9 @@ class Vec3 {
     static fromArray(arr) {
         return new Vec3(arr[0], arr[1], arr[2]);
     }
+    static randomVec() {
+        return new Vec3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).norm();
+    }
     toString() {
         return `x: ${this.x} y: ${this.y} z: ${this.z}`;
     }
@@ -283,8 +286,8 @@ class Geometry {
             vArr.push(insidePoints[0]);
             vArr.push(this.vectorPlaneIntersect(planeP, planeN, insidePoints[0], outsidePoints[0]));
             vArr.push(this.vectorPlaneIntersect(planeP, planeN, insidePoints[0], outsidePoints[1]));
-            let v1 = Render.detranslateToCam(vArr[1], Render.camArray[0]);
-            let v2 = Render.detranslateToCam(vArr[2], Render.camArray[0]);
+            //let v1 = Render.detranslateToCam(vArr[1], Render.camArray[0]);
+            //let v2 = Render.detranslateToCam(vArr[2], Render.camArray[0]);
             //Render.drawPoint3d(v1.x, v1.y, v1.z, Render.camArray[0])
             //Render.drawPoint3d(v2.x, v2.y, v2.z, Render.camArray[0])
             let clipped = new Tri(vArr, tri.id + 1, tri.colour);
@@ -321,7 +324,7 @@ class Geometry {
         if (insidePoints.length == 2) {
             return [v1, v2];
         }
-        let intersect = Render.detranslateToCam(this.vectorPlaneIntersect(planeP, planeN, v1, v2), Render.camArray[0]);
+        //let intersect = Render.detranslateToCam(this.vectorPlaneIntersect(planeP, planeN, v1, v2), Render.camArray[0]);
         //Render.drawPoint3d(intersect.x, intersect.y, intersect.z, Render.camArray[0])
         return [insidePoints[0], this.vectorPlaneIntersect(planeP, planeN, v1, v2)];
     }
