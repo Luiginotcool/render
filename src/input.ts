@@ -26,19 +26,20 @@ class Input {
     }
 
     static changeKey(key:string, to:number): void {
-        switch (key) {
+        //console.log(key, "to", to);
+        switch (key.toLowerCase()) {
             // left, a
-            case "ArrowLeft": case "a": this.keys.left = to; break;
+            case "ArrowLeft".toLowerCase(): case "a": this.keys.left = to; break;
             // right, d
-            case "ArrowRight": case "d": this.keys.right = to; break;
+            case "ArrowRight".toLowerCase(): case "d": this.keys.right = to; break;
             // up, w
-            case "ArrowUp": case "w": this.keys.up = to; break;
+            case "ArrowUp".toLowerCase(): case "w": this.keys.up = to; break;
             // down, s
-            case "ArrowDown": case "s": this.keys.down = to; break;
+            case "ArrowDown".toLowerCase(): case "s": this.keys.down = to; break;
             // p
             case "p": this.keys.p = to; break;
             // shift
-            case "Shift": this.keys.shift = to; break;
+            case "Shift".toLowerCase(): this.keys.shift = to; break;
             // space
             case " ": this.keys.space = to; break;
         }

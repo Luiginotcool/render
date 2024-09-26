@@ -10,24 +10,25 @@ class Input {
         Input.mouseDy = 0;
     }
     static changeKey(key, to) {
-        switch (key) {
+        //console.log(key, "to", to);
+        switch (key.toLowerCase()) {
             // left, a
-            case "ArrowLeft":
+            case "ArrowLeft".toLowerCase():
             case "a":
                 this.keys.left = to;
                 break;
             // right, d
-            case "ArrowRight":
+            case "ArrowRight".toLowerCase():
             case "d":
                 this.keys.right = to;
                 break;
             // up, w
-            case "ArrowUp":
+            case "ArrowUp".toLowerCase():
             case "w":
                 this.keys.up = to;
                 break;
             // down, s
-            case "ArrowDown":
+            case "ArrowDown".toLowerCase():
             case "s":
                 this.keys.down = to;
                 break;
@@ -36,7 +37,7 @@ class Input {
                 this.keys.p = to;
                 break;
             // shift
-            case "Shift":
+            case "Shift".toLowerCase():
                 this.keys.shift = to;
                 break;
             // space

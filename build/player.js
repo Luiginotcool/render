@@ -1,0 +1,49 @@
+"use strict";
+class PlayerController {
+    constructor(pos) {
+        this.pos = pos ? pos : new Vec3(0, 0, 0);
+        this.speed = 0.1;
+        this.heading = 0;
+        this.elevation = 0;
+    }
+    handleInput() {
+        // Calculate forward direction
+        let vx = this.speed * -Math.sin(this.heading);
+        let vz = this.speed * Math.cos(this.heading);
+        if (Input.keys.up) {
+            this.pos.x -= vx;
+            this.pos.z += vz;
+            //console.log(this.z)
+        }
+        if (Input.keys.down) {
+            this.pos.x += vx;
+            this.pos.z -= vz;
+        }
+        if (Input.keys.left) {
+            this.pos.x -= vz;
+            this.pos.z -= vx;
+        }
+        if (Input.keys.right) {
+            this.pos.x += vz;
+            this.pos.z += vx;
+        }
+        if (Input.keys.space) {
+            this.pos.y += this.speed;
+        }
+        if (Input.keys.shift) {
+            this.pos.y -= this.speed;
+        }
+        if (document.pointerLockElement === App.canvas) {
+            if (Input.mouseX) {
+                this.heading += Input.mouseDx * App.mouseSensitivity;
+                this.elevation += Input.mouseDy * App.mouseSensitivity;
+                Input.mouseX = 0;
+                Input.mouseY = 0;
+            }
+            else {
+                Input.mouseX = 0;
+            }
+        }
+        return new Transform(this.pos, undefined, new Vec3(this.elevation, this.heading, 0));
+    }
+}
