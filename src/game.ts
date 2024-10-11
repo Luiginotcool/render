@@ -1,108 +1,61 @@
-class Game {
+import { App } from "./app.js";
+import { Camera } from "./camera.js";
+import { GameEngine } from "./engine.js";
+import { Transform } from "./transform.js";
+import { GameObject } from "./gameObject.js";
+import { Graphics } from "./graphics.js";
+import { Input } from "./input.js";
+import { Vec3 } from "./maths.js";
+import { PlayerController } from "./player.js";
+import { Render } from "./render.js";
+import { Texture } from "./texture.js";
+import { Tri } from "./tri.js";
+import { Obj } from "./obj.js"
 
-    static player: GameObject;
-    static triArr: Array<Tri>
-    static t: number;
-    static sceneArray: Array<Scene>;
-    static camArray: Array<Camera>;
-    static sceneNum: number;
+export class Game {
+
 
     static init(): void {
-        this.t = 0;
-        this.sceneNum = 0;
-        //this.gameObjects = [];
-        this.sceneArray = [];
-        this.camArray = [];
-        Render.init();
+
+        GameEngine.init();
+        GameEngine.player = new GameObject();
+        GameEngine.player.controller = new PlayerController();
+        GameEngine.camArray.push(new Camera());
+
+        let testMesh = Obj.parseObjData(Obj.objData[1]);
+        testMesh.randomiseTextures();
+        GameEngine.sceneArray[0].gameObjects[0].mesh = testMesh;
 
         Input.setOnMouseDown(Game.onMouseClick);
-
-
-        
-        let playerController = new PlayerController();
-        this.player = new GameObject()
-        this.player.controller = playerController;
-        this.camArray.push(new Camera);
-
-        let gameObjects: Array<GameObject> = [];
-        Game.loadTris().forEach(tri => {
-            let obj = new GameObject();
-            obj.mesh = new Mesh([tri]);
-            obj.physicsBody = new PhysicsBody(new Vec3(0, 0, 1), Vec3.randomVec().mult(0.001));
-            gameObjects.push(obj);
-        })
-
-        //this.triArr = Game.loadTris();
-        this.sceneArray.push(new Scene(gameObjects));
-
-        gameObjects = [];
-        Game.loadTris().forEach(tri => {
-            let obj = new GameObject();
-            obj.mesh = new Mesh([tri]);
-            obj.physicsBody = new PhysicsBody();
-            gameObjects.push(obj);
-        })
-        this.sceneArray.push(new Scene(gameObjects));
-
-        gameObjects = [];
-        let obj = new GameObject();
-        obj.mesh = Mesh.cubeMesh(new Transform());
-        this.sceneArray.push(new Scene([obj]));
-
-        //this.triArr = Game.loadTris();
 
     }
 
     static gameLoop(dt: number): void {
 
+        GameEngine.update(dt);
+
+        let trans = new Transform(
+            new Vec3(0, 0, 2),
+            new Vec3(0.1, 0.1, 0.1),
+            new Vec3(0, GameEngine.t/50, 0),
+        )
+        GameEngine.sceneArray[0].gameObjects[0].transform = trans;
 
 
-
-         
-        //this.player.controller!.handleInput();
-        this.player.update(dt); //-> handleInput, do phyisics
-        this.camArray[0].setState(this.player.transform);
-
-        let objs = Game.sceneArray[0].gameObjects;
-        objs.forEach((obj, i) => {
-            if (obj.has(obj.physicsBody)) {
-                //console.log(obj.physicsBody!.pos)
-                //obj.physicsBody!.acc = new Vec3((Math.random()-0.5)*0.00001,(Math.random()-0.5)*0.00001,(Math.random()-0.5)*0.00001); 
-                obj.physicsBody!.acc = Game.getForce(obj.physicsBody!.pos.add(obj.mesh!.triArray[0].getCentroid()));
-                obj.update(dt);
-                //obj.transform.scale = new Vec3(Game.t /1);
-                //obj.transform!.pos = new Vec3(0, 0, 0);
-                Game.sceneArray[0].gameObjects[i] = obj;
-            }
-
-        })
-
-
-        
         Game.draw();
         let fps = Math.round(1000 / (App.dt < 1000/60 ? 1000/60: App.dt));
         Graphics.drawFps(fps);
-        Game.t ++;
     }
 
     static draw(): void {       
         Graphics.background();
-        let cam = Game.camArray[0];
-        let scene = Game.sceneArray[Game.sceneNum%Game.sceneArray.length];
-
-
+        let cam = GameEngine.camArray[0];
+        let scene = GameEngine.sceneArray[GameEngine.sceneNum%GameEngine.sceneArray.length];
         Render.drawGrid(new Vec3(0, -2, 0), 10, 10, 1, cam);
-
-        if (Game.sceneArray.length > 0) {
-            //console.log(Game.sceneArray[0].gameObjects[0].physicsBody!.pos);
-            //console.log(Game.sceneArray[0].gameObjects[0].transform!.pos);
-            Game.renderScene(scene, cam);
-        }
-
-
-        ///Graphics.drawText(`${this.player.heading}`, 50, 10);
-        //console.log(this.player.heading);
-        
+        if (GameEngine.sceneArray.length > 0) {
+            GameEngine.renderScene(scene, cam);
+            //console.log("Scene size: ", scene.gameObjects)
+        }        
     }
 
     static getForce(pos: Vec3) {
@@ -110,18 +63,7 @@ class Game {
         return pos.mult(-1 * size);
     }
 
-    static renderScene(scene: Scene, cam: Camera) {
-        let triArr: Array<Tri> = [];
- 
-        scene.gameObjects.forEach(obj => {
-            if (obj.has(obj.mesh)) {
-                triArr.push(...obj.mesh!.triArray.map(tri => {return tri.transform(obj.transform)}));
-            }
-        })
-        //console.log(scene);
-        //console.log(triArr.length, Game.triArr.length);
-        Render.renderTriArray(triArr, cam);
-    }
+    
 
     static parseObjData(objData: string): Array<Tri> {
         let vArr: Array<Vec3> = [];
@@ -192,7 +134,7 @@ class Game {
         
         let triArr = Tri.handleString(triArrayString);
         triArr.forEach((tri, i) => {
-            triArr[i].colour = Game.randomColour();
+            triArr[i].texture = Texture.randomTexture();
         })
 
         triArr = [];
@@ -205,7 +147,7 @@ class Game {
             let v1 = randomPos.add(new Vec3(randomSize.x, 0, 0));
             let v2 = randomPos.add(new Vec3(0, randomSize.y, 0));
             let v3 = randomPos.add(new Vec3(0, 0, randomSize.z));
-            triArr.push(new Tri([v1,v2,v3], i, Game.randomColour()));
+            triArr.push(new Tri([v1,v2,v3], i, Texture.randomTexture()));
         }
 
         return triArr;
@@ -216,7 +158,7 @@ class Game {
     }   
 
     static onMouseClick(): void {
-        Game.sceneNum = (Game.sceneNum + 1) % 2; 
+        GameEngine.sceneNum = (GameEngine.sceneNum + 1) % 2; 
     }
 }
 

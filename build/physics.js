@@ -1,5 +1,5 @@
-"use strict";
-class PhysicsBody {
+import { Vec3 } from "./maths.js";
+export class PhysicsBody {
     constructor(pos, vel, acc) {
         // vel in u/s; acc in u/s2
         this.pos = pos ? pos : new Vec3(0, 0, 0);

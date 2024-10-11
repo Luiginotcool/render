@@ -1,4 +1,10 @@
-class Render {
+import { Camera } from "./camera.js";
+import { Graphics } from "./graphics.js";
+import { Vec3, Geometry, Vec2, Mat3x3 } from "./maths.js";
+import { Texture } from "./texture.js";
+import { Tri, Tri2d } from "./tri.js";
+
+export class Render {
 
     static triArray: Array<Tri>
     static camArray: Array<Camera>
@@ -16,7 +22,7 @@ class Render {
 
     static randomColours(triArr: Array<Tri>): void {
         triArr.forEach((tri, i) => {
-            tri.colour = `rgb(${Math.random()*255}, ${Math.random()*255}, ${Math.random()*255})`
+            tri.texture = Texture.randomTexture();
         })
     }
 
@@ -70,7 +76,7 @@ class Render {
         // Translate and Rotate
         let rotArr: Array<Vec3> = [];
         tri.vertexArray.forEach(v => {rotArr.push(this.translateToCam(v, cam))})
-        let rotTri = new Tri(rotArr, tri.id, tri.colour);
+        let rotTri = new Tri(rotArr, tri.id, tri.texture);
 
         // Clip to screen
         let screenPoint = new Vec3(0, 0, 0.01);
@@ -98,7 +104,7 @@ class Render {
                 spArray.push(sp);
                 vArr.push(new Vec3(vx, vy, 0));
             })
-            let triToRaster = new Tri(vArr, clippedTri.id, clippedTri.colour);
+            let triToRaster = new Tri(vArr, clippedTri.id, clippedTri.texture);
             let tris: Array<Tri> = [];
             tris.push(triToRaster);
 
@@ -126,7 +132,7 @@ class Render {
 
 
             tris.forEach(tri => {
-                let fill = tri.colour
+                let fill = tri.texture.colour;
                 //console.log(tri)
                 tri.vertexArray.forEach(v => {
                     //spArray.push(new screenPos(v.x, v.y));
@@ -194,7 +200,7 @@ class Render {
         triArr.forEach(tri => {
             let rotArr: Array<Vec3> = [];
             tri.vertexArray.forEach(v => {rotArr.push(this.translateToCam(v, cam))})
-            let rotTri = new Tri(rotArr, tri.id, tri.colour);
+            let rotTri = new Tri(rotArr, tri.id, tri.texture);
 
             let ps = new Vec3(0, 0, 0.1);
             let ns = new Vec3(0, 0, 1);
@@ -213,7 +219,7 @@ class Render {
                     let sp = {x: vp.x*Graphics.width, y: vp.y*Graphics.height};
                     vArr.push(new Vec2(sp.x, sp.y));
                 })
-                screenTris.push(new Tri2d(vArr, tri.id, tri.colour));
+                screenTris.push(new Tri2d(vArr, tri.id, tri.texture.colour));
                 i ++;
             })
 
@@ -225,7 +231,7 @@ class Render {
             })
 
         })
-        console.log("Tris drawn: ", i);
+        //console.log("Tris drawn: ", i);
 
         // For each tri:
         //      Translate and rotate

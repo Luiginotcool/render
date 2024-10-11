@@ -1,5 +1,8 @@
-"use strict";
-class PlayerController {
+import { Transform } from "./transform.js";
+import { App } from "./app.js";
+import { Input } from "./input.js";
+import { Vec3 } from "./maths.js";
+export class PlayerController {
     constructor(pos) {
         this.pos = pos ? pos : new Vec3(0, 0, 0);
         this.speed = 0.1;

@@ -1,4 +1,9 @@
-class PlayerController {
+import { Transform } from "./transform.js";
+import { App } from "./app.js";
+import { Input } from "./input.js";
+import { Vec3 } from "./maths.js";
+
+export class PlayerController {
     pos: Vec3;
     speed: number;
     heading: number;

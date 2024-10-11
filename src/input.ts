@@ -1,4 +1,4 @@
-class Input {
+export class Input {
     static keys  = {
         "left": 0,
         "right": 0,

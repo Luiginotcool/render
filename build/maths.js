@@ -1,5 +1,5 @@
-"use strict";
-class Vec2 {
+import { Tri } from "./tri.js";
+export class Vec2 {
     constructor(x, y) {
         this.x = x;
         this.y = y;
@@ -57,7 +57,7 @@ class Vec2 {
         return `x: ${this.x} y: ${this.y}`;
     }
 }
-class Vec3 {
+export class Vec3 {
     constructor(x, y, z) {
         this.x = x ? x : 0;
         this.y = y ? y : 0;
@@ -116,7 +116,7 @@ class Vec3 {
         return `x: ${this.x} y: ${this.y} z: ${this.z}`;
     }
 }
-class Mat3x3 {
+export class Mat3x3 {
     constructor(a1, a2, a3, b1, b2, b3, c1, c2, c3) {
         this.matrix = [
             [a1, a2, a3],
@@ -186,7 +186,7 @@ class Mat3x3 {
         return `${this.matrix[0][0]} ${this.matrix[0][1]} ${this.matrix[0][2]} \n ${this.matrix[1][0]} ${this.matrix[1][1]} ${this.matrix[1][2]} \n ${this.matrix[2][0]} ${this.matrix[2][1]} ${this.matrix[2][2]}`;
     }
 }
-class Mat2x2 {
+export class Mat2x2 {
     constructor(a1, a2, b1, b2) {
         this.matrix = [
             [a1, a2],
@@ -250,7 +250,7 @@ class Mat2x2 {
         return new Mat2x2(invDet * m[1][1], -invDet * m[0][1], -invDet * m[1][0], invDet * m[0][0]);
     }
 }
-class Geometry {
+export class Geometry {
     static vectorPlaneIntersect(planeP, planeN, lineStart, lineEnd) {
         planeN = planeN.norm();
         let planeD = -planeN.dot(planeP);
@@ -290,7 +290,7 @@ class Geometry {
             //let v2 = Render.detranslateToCam(vArr[2], Render.camArray[0]);
             //Render.drawPoint3d(v1.x, v1.y, v1.z, Render.camArray[0])
             //Render.drawPoint3d(v2.x, v2.y, v2.z, Render.camArray[0])
-            let clipped = new Tri(vArr, tri.id + 1, tri.colour);
+            let clipped = new Tri(vArr, tri.id + 1, tri.texture);
             //console.log("CLIPPED", clipped)                       ///////////                 ///////////////                 ////////////////                /////////
             return [clipped];
         }
@@ -303,7 +303,7 @@ class Geometry {
             vArr2.push(insidePoints[1]);
             vArr2.push(this.vectorPlaneIntersect(planeP, planeN, insidePoints[1], outsidePoints[0]));
             vArr2.push(vArr1[2]);
-            return [new Tri(vArr1, tri.id, tri.colour), new Tri(vArr2, tri.id + 1, tri.colour)];
+            return [new Tri(vArr1, tri.id, tri.texture), new Tri(vArr2, tri.id + 1, tri.texture)];
         }
         return [];
     }

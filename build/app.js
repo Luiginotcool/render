@@ -1,20 +1,8 @@
-"use strict";
-class Files {
-    static init() {
-    }
-    static readFile(path) {
-        let fd = "";
-        this.fs.readFile(path, "utf8", (err, data) => {
-            if (err) {
-                console.error("Error reading file:", err);
-                return;
-            }
-            fd = data;
-        });
-        return fd;
-    }
-}
-class App {
+import { Graphics } from "./graphics.js";
+import { Input } from "./input.js";
+import { Files } from "./files.js";
+import { Game } from "./game.js";
+export class App {
     static init() {
         App.canvas = document.getElementById("canvas");
         App.width = window.innerWidth;

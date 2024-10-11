@@ -1,4 +1,4 @@
-class Graphics {
+export class Graphics {
     static context: CanvasRenderingContext2D;
     static fg: string;
     static bg: string;
@@ -93,13 +93,13 @@ class Graphics {
     }
 
     static background(colour = Graphics.bg) {
-        if (!App.canvas) {
+        if (!this.context) {
             console.log("NO CANVAS")
             return;
         }
         //console.log("FILLING", colour)
         Graphics.context.fillStyle = colour;
-        Graphics.context.fillRect(0, 0, App.canvas.width, App.canvas.height);
+        Graphics.context.fillRect(0, 0, this.width, this.height);
     }
     
     static fillRect(x: number, y: number, w: number, h: number, colour = Graphics.fg) {

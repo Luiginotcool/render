@@ -1,5 +1,4 @@
-"use strict";
-class Graphics {
+export class Graphics {
     static init(canvas) {
         Graphics.context = canvas.getContext("2d");
         Graphics.fg = "black";
@@ -71,13 +70,13 @@ class Graphics {
         Graphics.context.fillText(text, 10, 30);
     }
     static background(colour = Graphics.bg) {
-        if (!App.canvas) {
+        if (!this.context) {
             console.log("NO CANVAS");
             return;
         }
         //console.log("FILLING", colour)
         Graphics.context.fillStyle = colour;
-        Graphics.context.fillRect(0, 0, App.canvas.width, App.canvas.height);
+        Graphics.context.fillRect(0, 0, this.width, this.height);
     }
     static fillRect(x, y, w, h, colour = Graphics.fg) {
         if (Graphics.centreMode) {

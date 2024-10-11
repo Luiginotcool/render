@@ -1,4 +1,6 @@
-class Vec2 {
+import { Tri } from "./tri.js";
+
+export class Vec2 {
     x: number;
     y: number;
 
@@ -71,7 +73,7 @@ class Vec2 {
     }
 }
 
-class Vec3 {
+export class Vec3 {
     x: number;
     y: number;
     z: number;
@@ -147,7 +149,7 @@ class Vec3 {
     }
 }
 
-class Mat3x3 {
+export class Mat3x3 {
     matrix: number[][];
 
     constructor(a1: number, a2: number, a3: number, b1: number, b2: number, b3: number, c1: number, c2: number, c3: number) {
@@ -249,7 +251,7 @@ class Mat3x3 {
 
 }
 
-class Mat2x2 {
+export class Mat2x2 {
     matrix: number[][];
 
     constructor(a1: number, a2: number, b1: number, b2: number) {
@@ -332,7 +334,7 @@ class Mat2x2 {
     }
 }
 
-class Geometry {
+export class Geometry {
 
     static vectorPlaneIntersect(planeP: Vec3, planeN: Vec3, lineStart: Vec3, lineEnd: Vec3): Vec3 {
         planeN = planeN.norm()!;
@@ -379,7 +381,7 @@ class Geometry {
             //let v2 = Render.detranslateToCam(vArr[2], Render.camArray[0]);
             //Render.drawPoint3d(v1.x, v1.y, v1.z, Render.camArray[0])
             //Render.drawPoint3d(v2.x, v2.y, v2.z, Render.camArray[0])
-            let clipped = new Tri(vArr, tri.id + 1, tri.colour)
+            let clipped = new Tri(vArr, tri.id + 1, tri.texture)
             //console.log("CLIPPED", clipped)                       ///////////                 ///////////////                 ////////////////                /////////
             return [clipped];
         }
@@ -398,7 +400,7 @@ class Geometry {
             vArr2.push(vArr1[2]);
 
 
-            return [new Tri(vArr1, tri.id, tri.colour), new Tri(vArr2, tri.id + 1, tri.colour)];
+            return [new Tri(vArr1, tri.id, tri.texture), new Tri(vArr2, tri.id + 1, tri.texture)];
         }
 
         return [];

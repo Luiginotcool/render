@@ -1,22 +1,25 @@
-class Files {
-    static fs: any;
-    static init() {
-    }
+import { Vec2, Vec3, Mat2x2, Mat3x3, Geometry} from "./maths";
+import { Graphics } from "./graphics.js";
+import { Input } from "./input.js";
+import { Files } from "./files.js";
+import { Camera } from "./camera";
+import { Tri } from "./tri";
+import { Mesh } from "./mesh";
+import { Scene } from "./scene";
+import { Texture } from "./texture";
+import { Transform } from "./transform";
+import { PhysicsBody } from "./physics";
+import { PlayerController } from "./player";
+import { Render } from "./render";
+import { GameEngine } from "./engine";
+import { GameObject } from "./gameObject";
+import { Game } from "./game.js";
 
-    static readFile(path: string): string {
-        let fd = ""
-        this.fs.readFile(path, "utf8", (err: any, data: any) => {
-            if (err) {
-                console.error("Error reading file:", err);
-                return;
-            }
-            fd = data;
-        })
-        return fd;
-    }
-}
 
-class App {
+
+
+
+export class App {
     static canvas: HTMLCanvasElement;
     static width: number;
     static height: number;

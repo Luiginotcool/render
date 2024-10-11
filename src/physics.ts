@@ -1,4 +1,6 @@
-class PhysicsBody {
+import { Vec3 } from "./maths.js";
+
+export class PhysicsBody {
     pos: Vec3;
     vel: Vec3;
     acc: Vec3;

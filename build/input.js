@@ -1,5 +1,4 @@
-"use strict";
-class Input {
+export class Input {
     static init() {
         document.addEventListener('keydown', function (e) { Input.changeKey(e.key, 1); });
         document.addEventListener('keyup', function (e) { Input.changeKey(e.key, 0); });
